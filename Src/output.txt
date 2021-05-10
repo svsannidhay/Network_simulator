@@ -1,0 +1,10 @@
+ mac assigned to device 1 is : 00:AA:BB:00:00
+ mac assigned to device 2 is : 00:AA:BB:00:01
+ mac assigned to device 10 is : 00:AA:BB:00:02
+ mac assigned to device 3 is : 00:AA:BB:00:03
+ mac assigned to device 4 is : 00:AA:BB:00:04
+ mac assigned to device 5 is : 00:AA:BB:00:05
+ mac assigned to device 6 is : 00:AA:BB:00:06
+ mac assigned to device 7 is : 00:AA:BB:00:07
+ mac assigned to device 8 is : 00:AA:BB:00:08
+ mac assigned to device 9 is : 00:AA:BB:00:09
