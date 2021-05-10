@@ -135,10 +135,10 @@ void generate_mac_address() {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+///////////////////////////////////Physical Topology//////////////////////////////////////////////
 
 // Network 
-// We will store the whole topology as a graph (adjacency list)
+//Saving the whole topology as a graph (adjacency list)
 vector< ll > connections[1001];
 
 // Adding connections 
@@ -151,6 +151,8 @@ void addEdge(ll u,ll v) {
 // we will map each device to its type
 unordered_map< ll , pair<string,ll> > device_type;
 
+
+// Caching the data of each device 
 vector<Device> device_list;
 ll device_no;
 vector<Hub> hub_list;
@@ -160,6 +162,48 @@ ll bridge_no;
 vector<Switch> switch_list;
 ll switch_no;
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////DEBUGGER///////////////////////////////////////////////
+
+void dfs(ll current_device, vector<bool> & visited) {
+    if(!visited[current_device]) {
+        visited[current_device] = true;
+
+        string type = device_type[current_device].f;
+        if( type == "device") {
+            Device d = device_list[device_type[current_device].s];
+            cout<<"global index : "<<d.global_index<<"\n";
+            cout<<"mac address : "<<d.mac_address<<"\n";
+            cout<<"device type : "<<type<<"\n\n";
+        } else if(type == "hub") {
+            Hub h = hub_list[device_type[current_device].s];
+            cout<<"global index : "<<h.global_index<<"\n";
+            cout<<"mac address : "<<h.mac_address<<"\n";
+            cout<<"device type : "<<type<<"\n\n";
+        } else if(type == "switch") {
+            Switch s = switch_list[device_type[current_device].s];
+            cout<<"global index : "<<s.global_index<<"\n";
+            cout<<"mac address : "<<s.mac_address<<"\n";
+            cout<<"device type : "<<type<<"\n\n";
+        } else if(type == "bridge") {
+            Bridge b = bridge_list[device_type[current_device].s];
+            cout<<"global index : "<<b.global_index<<"\n";
+            cout<<"mac address : "<<b.mac_address<<"\n";
+            cout<<"device type : "<<type<<"\n\n";
+        }
+
+        for(ll i = 0;i < connections[current_device].size(); i++) {
+            if(!visited[connections[current_device][i]]) {
+                dfs(connections[current_device][i],visited);
+            }
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Network booter 
 
@@ -207,6 +251,9 @@ void boot() {
             cout<< " mac assigned to device "<<ind<<" is : "<<s.mac_address<<"\n";
         }
     }
+
+    cout<<"\n";
+
     // cout<<"Devices : ";
     // for(ll i=0;i<device_list.size();i++) {
     //     cout<<device_list[i].global_index<<" ";
@@ -231,7 +278,8 @@ void boot() {
         cinll(u);cinll(v);
         addEdge(u,v);
     }
-
+    vector<bool> visited(n+1,false);
+    dfs(1,visited);
 }
 
 

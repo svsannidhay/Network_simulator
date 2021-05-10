@@ -8,3 +8,44 @@
  mac assigned to device 7 is : 00:AA:BB:00:07
  mac assigned to device 8 is : 00:AA:BB:00:08
  mac assigned to device 9 is : 00:AA:BB:00:09
+
+global index : 1
+mac address : 00:AA:BB:00:00
+device type : device
+
+global index : 2
+mac address : 00:AA:BB:00:01
+device type : switch
+
+global index : 7
+mac address : 00:AA:BB:00:07
+device type : device
+
+global index : 10
+mac address : 00:AA:BB:00:02
+device type : device
+
+global index : 8
+mac address : 00:AA:BB:00:08
+device type : bridge
+
+global index : 9
+mac address : 00:AA:BB:00:09
+device type : switch
+
+global index : 3
+mac address : 00:AA:BB:00:03
+device type : device
+
+global index : 4
+mac address : 00:AA:BB:00:04
+device type : device
+
+global index : 5
+mac address : 00:AA:BB:00:05
+device type : device
+
+global index : 6
+mac address : 00:AA:BB:00:06
+device type : device
+
