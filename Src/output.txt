@@ -187,6 +187,112 @@ Switch's mac address : 00:AA:BB:00:08
 00:AA:BB:00:02 0
 
 
+SENDING PACKET FROM 00:AA:BB:00:05  to  00:AA:BB:00:07
+
+Device Type : device
+Global Index : 5
+Mac address : 00:AA:BB:00:05
+Sending to : 9
+
+SWITCH IS BROADCASTING : 
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 8
+
+Device Type : bridge
+Global Index : 8
+Mac address : 00:AA:BB:00:08
+Sending to : 2
+
+SWITCH IS BROADCASTING : 
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 1
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 7
+
+Data packet recieved sucessfully sending back ACK
+SENDING ACK FROM 00:AA:BB:00:07  to  00:AA:BB:00:05
+
+Device Type : device
+Global Index : 7
+Mac address : 00:AA:BB:00:07
+isACK 
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+isACK 
+Sending to : 8
+
+Device Type : bridge
+Global Index : 8
+Mac address : 00:AA:BB:00:08
+isACK 
+Sending to : 9
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+isACK 
+Sending to : 5
+
+ACK recieved sucessfully 
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 10
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 3
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 4
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 6
+
+
+SWITCHING TABLE 
+Switch's global address : 2
+Switch's mac address : 00:AA:BB:00:01
+00:AA:BB:00:00 1
+00:AA:BB:00:07 2
+00:AA:BB:00:02 3
+00:AA:BB:00:05 4
+
+SWITCHING TABLE 
+Switch's global address : 9
+Switch's mac address : 00:AA:BB:00:09
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 4
+
+Bridge TABLE 
+Switch's global address : 8
+Switch's mac address : 00:AA:BB:00:08
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 2
+
+
 SENDING PACKET FROM 00:AA:BB:00:07  to  00:AA:BB:00:04
 
 Device Type : device
@@ -274,6 +380,7 @@ Switch's mac address : 00:AA:BB:00:01
 00:AA:BB:00:00 1
 00:AA:BB:00:07 2
 00:AA:BB:00:02 3
+00:AA:BB:00:05 4
 00:AA:BB:00:04 4
 
 SWITCHING TABLE 
@@ -282,6 +389,7 @@ Switch's mac address : 00:AA:BB:00:09
 00:AA:BB:00:00 1
 00:AA:BB:00:07 1
 00:AA:BB:00:02 0
+00:AA:BB:00:05 4
 00:AA:BB:00:04 3
 
 Bridge TABLE 
@@ -290,6 +398,65 @@ Switch's mac address : 00:AA:BB:00:08
 00:AA:BB:00:00 1
 00:AA:BB:00:07 1
 00:AA:BB:00:02 0
+00:AA:BB:00:05 2
+00:AA:BB:00:04 2
+
+
+SENDING PACKET FROM 00:AA:BB:00:00  to  00:AA:BB:00:02
+
+Device Type : device
+Global Index : 1
+Mac address : 00:AA:BB:00:00
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 10
+
+Data packet recieved sucessfully sending back ACK
+SENDING ACK FROM 00:AA:BB:00:02  to  00:AA:BB:00:00
+
+Device Type : device
+Global Index : 10
+Mac address : 00:AA:BB:00:02
+isACK 
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+isACK 
+Sending to : 1
+
+ACK recieved sucessfully 
+
+
+SWITCHING TABLE 
+Switch's global address : 2
+Switch's mac address : 00:AA:BB:00:01
+00:AA:BB:00:00 1
+00:AA:BB:00:07 2
+00:AA:BB:00:02 3
+00:AA:BB:00:05 4
+00:AA:BB:00:04 4
+
+SWITCHING TABLE 
+Switch's global address : 9
+Switch's mac address : 00:AA:BB:00:09
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 4
+00:AA:BB:00:04 3
+
+Bridge TABLE 
+Switch's global address : 8
+Switch's mac address : 00:AA:BB:00:08
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 2
 00:AA:BB:00:04 2
 
 
@@ -341,6 +508,64 @@ Global Index : 9
 Mac address : 00:AA:BB:00:09
 isACK 
 Sending to : 5
+
+ACK recieved sucessfully 
+
+
+SWITCHING TABLE 
+Switch's global address : 2
+Switch's mac address : 00:AA:BB:00:01
+00:AA:BB:00:00 1
+00:AA:BB:00:07 2
+00:AA:BB:00:02 3
+00:AA:BB:00:05 4
+00:AA:BB:00:04 4
+
+SWITCHING TABLE 
+Switch's global address : 9
+Switch's mac address : 00:AA:BB:00:09
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 4
+00:AA:BB:00:04 3
+
+Bridge TABLE 
+Switch's global address : 8
+Switch's mac address : 00:AA:BB:00:08
+00:AA:BB:00:00 1
+00:AA:BB:00:07 1
+00:AA:BB:00:02 0
+00:AA:BB:00:05 2
+00:AA:BB:00:04 2
+
+
+SENDING PACKET FROM 00:AA:BB:00:00  to  00:AA:BB:00:02
+
+Device Type : device
+Global Index : 1
+Mac address : 00:AA:BB:00:00
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 10
+
+Data packet recieved sucessfully sending back ACK
+SENDING ACK FROM 00:AA:BB:00:02  to  00:AA:BB:00:00
+
+Device Type : device
+Global Index : 10
+Mac address : 00:AA:BB:00:02
+isACK 
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+isACK 
+Sending to : 1
 
 ACK recieved sucessfully 
 
