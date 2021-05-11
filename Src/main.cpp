@@ -206,6 +206,80 @@ void dfs(ll current_device, vector<bool> & visited) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+////////////////////////////////Collision Domain calculator //////////////////////////////////////
+
+//So far it doesn't support routers and brouters 
+
+map< pair<ll,ll> ,ll> edge_value; 
+
+void count_collision_domains(ll current_device,ll prev_device,vector<bool> &visited,ll &val) {
+    if(!visited[current_device]) {
+        visited[current_device] = true;
+
+        if(prev_device != -1) {
+            edge_value[(mp(current_device,prev_device))] = val;
+            edge_value[mp(prev_device,current_device)] = val;
+        }
+
+        for(ll i=0;i < connections[current_device].size();i++) {
+            if(!visited[connections[current_device][i]]) {
+
+                if( (device_type[current_device].f == "switch" || device_type[current_device].f == "bridge") && device_type[connections[current_device][i]].f == "device") {
+                    val++;
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+                if(device_type[current_device].f == "device" && (device_type[connections[current_device][i]].f == "switch" || device_type[connections[current_device][i]].f == "bridge" ) ) {
+                    val++;
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+                if( (device_type[current_device].f == "switch" || device_type[current_device].f == "bridge") &&  (device_type[connections[current_device][i]].f == "switch" || device_type[connections[current_device][i]].f == "bridge" )) {
+                    val++;
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+                if( (device_type[current_device].f == "switch" || device_type[current_device].f == "bridge") && device_type[connections[current_device][i]].f == "hub") {
+                    val++;
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                }             
+
+                if(device_type[current_device].f == "hub" && (device_type[connections[current_device][i]].f == "switch" || device_type[connections[current_device][i]].f == "bridge" )) {
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+                if(device_type[current_device].f == "hub" && device_type[connections[current_device][i]].f == "device") {
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+                if(device_type[current_device].f == "device" && device_type[connections[current_device][i]].f == "hub") {
+                    count_collision_domains(connections[current_device][i],current_device,visited,val);
+                } 
+
+            }   
+
+        }
+
+    }
+}
+
+void no_of_collision_domains() {
+    vector<bool> visited(10001,false);
+    ll val = 1;
+    count_collision_domains(1,-1,visited,val);
+    set<ll> ans;
+    for(auto it = edge_value.begin(); it != edge_value.end(); it++) {
+        ans.insert(it->second);
+    }
+    cout<<"\n NO OF COLLISION DOMAINS "<< ans.size() << "\n";
+    cout<<"\n NO OF BROADCAST DOMAINS "<< 1 << "\n";
+}
+
+// ALSO no of boradCast domains will always be 1 upto layer two devices.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 ////////////////////////////////SEND PACKETS (BOTH DATA AND ACK) /////////////////////////////////
 
 
@@ -347,7 +421,9 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
     
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Network booter 
+/////////////////////////////////////// NETWORK BOOTER ////////////////////////////////////////// 
+// Assign's MAC addresses and create the graph to represent the whole network
+
 
 void boot() {
     cinll(n);
@@ -423,6 +499,9 @@ void boot() {
     dfs(1,visited);
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 void run_network() {
     // Resolving Queries
@@ -557,6 +636,7 @@ void solve() {
     generate_mac_address();
     boot();
     run_network();
+    no_of_collision_domains();
     return;
 }    
 
@@ -575,3 +655,82 @@ int main(){
     // }
   return 0;
 }
+
+/*
+
+SAMPLE TEST
+
+10 9
+1 device
+2 switch
+10 device 
+3 device 
+4 device 
+5 device 
+6 device 
+7 device
+8 bridge
+9 switch
+1 2 
+2 7
+2 10
+2 8 
+8 9 
+3 9 
+4 9 
+5 9
+6 9 
+4
+1 10 3
+10 1 1
+7 4 1
+5 7 2
+
+
+
+SAMPLE TEST 2
+20 19
+1 device
+2 device
+3 device
+4 switch
+5 switch
+6 hub
+7 device 
+8 device
+9 device
+10 hub
+11 switch
+12 device
+13 device
+14 device
+15 hub
+16
+switch
+17 hub
+18 device
+19 device
+20 device
+1 4 
+3 4
+2 4
+4 5  
+6 5
+6 7 
+6 8 
+6 9
+5 15
+15 16
+16 17
+17 18
+17 19
+17 20
+5 10
+10 11
+11 12
+11 13
+11 14 
+0
+
+
+*/
