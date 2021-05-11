@@ -209,7 +209,7 @@ void dfs(ll current_device, vector<bool> & visited) {
 ////////////////////////////////SEND PACKETS (BOTH DATA AND ACK) /////////////////////////////////
 
 
-void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string senders_mac,string destination_mac) {
+void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string senders_mac,string destination_mac,bool isAck) {
     if(!visited[current_device]) {
         visited[current_device] = true;
         
@@ -244,9 +244,10 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     cout<<"Device Type : "<< type<<"\n";
                     cout<<"Global Index : "<<s.global_index<<"\n";
                     cout<<"Mac address : "<<s.mac_address<<"\n";
+                    if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
 
-                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac);
+                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck);
                 } else {
                     //Broadcast
                     cout<<"SWITCH IS BROADCASTING : \n\n";
@@ -255,8 +256,9 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                             cout<<"Device Type : "<< type<<"\n";
                             cout<<"Global Index : "<<s.global_index<<"\n";
                             cout<<"Mac address : "<<s.mac_address<<"\n";
+                            if(isAck) cout<<"isACK \n";
                             cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
-                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
                         }
                     }
                 }
@@ -272,8 +274,9 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     cout<<"Device Type : "<< type<<"\n";
                     cout<<"Global Index : "<<b.global_index<<"\n";
                     cout<<"Mac address : "<<b.mac_address<<"\n";
+                    if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
-                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac);
+                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck);
                 } else {
                     //Broadcast
                     for(ll i = 0;i < connections[current_device].size(); i++) {
@@ -281,8 +284,9 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                             cout<<"Device Type : "<< type<<"\n";
                             cout<<"Global Index : "<<b.global_index<<"\n";
                             cout<<"Mac address : "<<b.mac_address<<"\n";
+                            if(isAck) cout<<"isACK \n";
                             cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
-                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
                         }
                     }
                 }
@@ -295,6 +299,17 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
         // if the device is Hub or a dedicated connection directly send
         Hub h;
         Device d;
+        // CHECK IF WE ARE DESTINATION OR NOT
+        d = device_list[device_type[current_device].s];
+        if(type == "device" && d.mac_address == destination_mac && !isAck) {
+            cout<<"Data packet recieved sucessfully sending back ACK";
+            vector<bool> visited(10001,false);
+            cout<<"\nSENDING ACK FROM "<< destination_mac<<"  to  "<<senders_mac<<"\n\n";
+            send_packet(current_device,visited,-1,destination_mac,senders_mac,true);
+            return;
+        } else if(type == "device" && d.mac_address == destination_mac) {
+            cout<<"ACK recieved sucessfully \n\n";
+        }
         for(ll i = 0;i < connections[current_device].size(); i++) {
             if(!visited[connections[current_device][i]]) {
                 if(type == "hub") {
@@ -302,6 +317,7 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     cout<<"Device Type : "<< type<<"\n";
                     cout<<"Global Index : "<<h.global_index<<"\n";
                     cout<<"Mac address : "<<h.mac_address<<"\n";
+                    if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
                 } 
                 if(type == "device") {
@@ -309,9 +325,20 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     cout<<"Device Type : "<< type<<"\n";
                     cout<<"Global Index : "<<d.global_index<<"\n";
                     cout<<"Mac address : "<<d.mac_address<<"\n";
+                    if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
+
+                    if(d.mac_address == destination_mac && !isAck) {
+                        cout<<"Data packet recieved sucessfully sending back ACK";
+                        vector<bool> visited(10001,false);
+                        cout<<"\nSENDING ACK FROM "<< destination_mac<<"  to  "<<senders_mac<<"\n\n";
+                        send_packet(current_device,visited,-1,destination_mac,senders_mac,true);
+                        return;
+                    } else if(d.mac_address == destination_mac) {
+                        cout<<"ACK recieved sucessfully";
+                    }
                 }
-                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
             }
         }
     }
@@ -411,20 +438,36 @@ void run_network() {
         
         vector<bool> visited(n+1,false);
         cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
-        send_packet(a,visited,-1,ad.mac_address,bd.mac_address);  
+        send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false);  
 
         cout<<"\n";
 
-        cout<<"SWITCHING TABLES \n";
+        
         for(ll i=0;i<switch_list.size();i++) {
-            Switch s = switch_list[i];
-            cout<<s.global_index<<"\n";
-            cout<<s.mac_address<<"\n";
             cout<<"SWITCHING TABLE \n";
+            Switch s = switch_list[i];
+            cout<<"Switch's global address : "<<s.global_index<<"\n";
+            cout<<"Switch's mac address : "<<s.mac_address<<"\n";
+            
             for(auto it = s.switch_table.begin();it!= s.switch_table.end();it++) {
                 cout<<it->first<<" "<<it->second<<"\n"; 
             }
+            cout<<"\n";
         } 
+
+        for(ll i=0;i < bridge_list.size();i++) {
+            cout<<"Bridge TABLE \n";
+            Bridge b = bridge_list[i];
+            cout<<"Switch's global address : "<<b.global_index<<"\n";
+            cout<<"Switch's mac address : "<<b.mac_address<<"\n";
+            
+            for(auto it = b.bridge_table.begin();it!= b.bridge_table.end();it++) {
+                cout<<it->first<<" "<<it->second<<"\n"; 
+            }
+
+            cout<<"\n";
+        } 
+
     }
 }
 
