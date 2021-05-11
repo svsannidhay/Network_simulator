@@ -49,3 +49,92 @@ global index : 6
 mac address : 00:AA:BB:00:06
 device type : device
 
+
+SENDING PACKET FROM 00:AA:BB:00:00  to  00:AA:BB:00:02
+
+Device Type : device
+Global Index : 1
+Mac address : 00:AA:BB:00:00
+Sending to : 2
+
+SWITCH IS BROADCASTING : 
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 7
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 10
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 8
+
+Device Type : bridge
+Global Index : 8
+Mac address : 00:AA:BB:00:08
+Sending to : 9
+
+SWITCH IS BROADCASTING : 
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 3
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 4
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 5
+
+Device Type : switch
+Global Index : 9
+Mac address : 00:AA:BB:00:09
+Sending to : 6
+
+
+SWITCHING TABLES 
+2
+00:AA:BB:00:01
+SWITCHING TABLE 
+00:AA:BB:00:00 1
+00:AA:BB:00:02 0
+9
+00:AA:BB:00:09
+SWITCHING TABLE 
+00:AA:BB:00:00 1
+00:AA:BB:00:02 0
+
+SENDING PACKET FROM 00:AA:BB:00:02  to  00:AA:BB:00:00
+
+Device Type : device
+Global Index : 10
+Mac address : 00:AA:BB:00:02
+Sending to : 2
+
+Device Type : switch
+Global Index : 2
+Mac address : 00:AA:BB:00:01
+Sending to : 1
+
+
+SWITCHING TABLES 
+2
+00:AA:BB:00:01
+SWITCHING TABLE 
+00:AA:BB:00:00 1
+00:AA:BB:00:02 3
+9
+00:AA:BB:00:09
+SWITCHING TABLE 
+00:AA:BB:00:00 1
+00:AA:BB:00:02 0

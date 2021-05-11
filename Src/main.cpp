@@ -75,7 +75,7 @@ class Switch{
     string mac_address;
     // Hashed Switch table for O(1) look up time 
     // Mapping mac address to the port of the switch
-    unordered_map<string,ll> swicth_table;
+    unordered_map<string,ll> switch_table;
 };
 
 class Bridge{
@@ -84,7 +84,7 @@ class Bridge{
     string mac_address;
     // Hashed Switch table for O(1) look up time
     // Mapping mac address to the port of the switch
-    unordered_map<string, ll> swicth_table;
+    unordered_map<string, ll> bridge_table;
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -205,6 +205,121 @@ void dfs(ll current_device, vector<bool> & visited) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////SEND PACKETS (BOTH DATA AND ACK) /////////////////////////////////
+
+
+void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string senders_mac,string destination_mac) {
+    if(!visited[current_device]) {
+        visited[current_device] = true;
+        
+        string type = device_type[current_device].f;
+        // If the device is switch or bridge we will cache port and source in the caching table first
+        if(type == "switch" || type == "bridge") {
+            // First lets indetify the port on which our source is 
+            ll port = -1;
+            for(ll i = 0;i < connections[current_device].size(); i++) {
+                if (connections[current_device][i] == ind_prev) {
+                    port = i+1;
+                    break;
+                }
+            }
+
+            if(type == "switch") {
+                Switch &s = switch_list[device_type[current_device].s];
+                if(port != -1) { 
+                    s.switch_table[senders_mac] = port;
+                    // cout<<s.global_index<<"\n";
+                    // cout<<s.mac_address<<"\n";
+                    // cout<<"SWITCHING TABLE \n";
+                    // for(auto it = s.switch_table.begin();it!= s.switch_table.end();it++) {
+                    //     cout<<it->first<<" "<<it->second<<"\n"; 
+                    // }
+                }
+                ll destPort = 0;
+                destPort = s.switch_table[destination_mac];
+
+                if(destPort != 0) {
+
+                    cout<<"Device Type : "<< type<<"\n";
+                    cout<<"Global Index : "<<s.global_index<<"\n";
+                    cout<<"Mac address : "<<s.mac_address<<"\n";
+                    cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
+
+                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac);
+                } else {
+                    //Broadcast
+                    cout<<"SWITCH IS BROADCASTING : \n\n";
+                    for(ll i = 0;i < connections[current_device].size(); i++) {
+                        if(!visited[connections[current_device][i]]) {
+                            cout<<"Device Type : "<< type<<"\n";
+                            cout<<"Global Index : "<<s.global_index<<"\n";
+                            cout<<"Mac address : "<<s.mac_address<<"\n";
+                            cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
+                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+                        }
+                    }
+                }
+
+            }
+
+            if(type == "bridge") {
+                Bridge &b = bridge_list[device_type[current_device].s];
+                if(port != -1) b.bridge_table[senders_mac] = port;
+                ll destPort = 0;
+                destPort = b.bridge_table[destination_mac];
+                if(destPort != 0) {
+                    cout<<"Device Type : "<< type<<"\n";
+                    cout<<"Global Index : "<<b.global_index<<"\n";
+                    cout<<"Mac address : "<<b.mac_address<<"\n";
+                    cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
+                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac);
+                } else {
+                    //Broadcast
+                    for(ll i = 0;i < connections[current_device].size(); i++) {
+                        if(!visited[connections[current_device][i]]) {
+                            cout<<"Device Type : "<< type<<"\n";
+                            cout<<"Global Index : "<<b.global_index<<"\n";
+                            cout<<"Mac address : "<<b.mac_address<<"\n";
+                            cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
+                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+                        }
+                    }
+                }
+            }
+
+            return;
+
+        }      
+
+        // if the device is Hub or a dedicated connection directly send
+        Hub h;
+        Device d;
+        for(ll i = 0;i < connections[current_device].size(); i++) {
+            if(!visited[connections[current_device][i]]) {
+                if(type == "hub") {
+                    h = hub_list[device_type[current_device].s];
+                    cout<<"Device Type : "<< type<<"\n";
+                    cout<<"Global Index : "<<h.global_index<<"\n";
+                    cout<<"Mac address : "<<h.mac_address<<"\n";
+                    cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
+                } 
+                if(type == "device") {
+                    d = device_list[device_type[current_device].s];
+                    cout<<"Device Type : "<< type<<"\n";
+                    cout<<"Global Index : "<<d.global_index<<"\n";
+                    cout<<"Mac address : "<<d.mac_address<<"\n";
+                    cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
+                }
+                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac);
+            }
+        }
+    }
+}
+
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Network booter 
 
 void boot() {
@@ -253,7 +368,6 @@ void boot() {
     }
 
     cout<<"\n";
-
     // cout<<"Devices : ";
     // for(ll i=0;i<device_list.size();i++) {
     //     cout<<device_list[i].global_index<<" ";
@@ -280,12 +394,44 @@ void boot() {
     }
     vector<bool> visited(n+1,false);
     dfs(1,visited);
+
 }
 
+void run_network() {
+    // Resolving Queries 
+    cinll(q);
+    for(ll i = 0;i < q; i++) {
+        // a -> sender 
+        // b -> receiver 
+        // n -> no of packets
+        cinll(a);cinll(b);cinll(n);
+        // a and b will always be devices
+        Device ad = device_list[device_type[a].s];
+        Device bd = device_list[device_type[b].s];
+        
+        vector<bool> visited(n+1,false);
+        cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
+        send_packet(a,visited,-1,ad.mac_address,bd.mac_address);  
+
+        cout<<"\n";
+
+        cout<<"SWITCHING TABLES \n";
+        for(ll i=0;i<switch_list.size();i++) {
+            Switch s = switch_list[i];
+            cout<<s.global_index<<"\n";
+            cout<<s.mac_address<<"\n";
+            cout<<"SWITCHING TABLE \n";
+            for(auto it = s.switch_table.begin();it!= s.switch_table.end();it++) {
+                cout<<it->first<<" "<<it->second<<"\n"; 
+            }
+        } 
+    }
+}
 
 void solve() {
     generate_mac_address();
     boot();
+    run_network();
     return;
 }    
 
