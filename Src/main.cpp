@@ -439,7 +439,7 @@ void boot() {
             device_type[ind] = mp(type,device_no);
             device_no++;
             mac_index++;
-            cout<< " mac assigned to device "<<ind<<" is : "<<d.mac_address<<"\n";
+            // cout<< " mac assigned to device "<<ind<<" is : "<<d.mac_address<<"\n";
         } else if(type == "hub") {
             Hub h;
             h.global_index = ind;
@@ -448,7 +448,7 @@ void boot() {
             device_type[ind] = mp(type,hub_no);
             hub_no++;
             mac_index++;
-            cout<< " mac assigned to device "<<ind<<" is : "<<h.mac_address<<"\n";
+            // cout<< " mac assigned to device "<<ind<<" is : "<<h.mac_address<<"\n";
         } else if(type == "bridge") {
             Bridge b;
             b.global_index = ind;
@@ -457,7 +457,7 @@ void boot() {
             device_type[ind] = mp(type,bridge_no);
             bridge_no++;
             mac_index++;
-            cout<< " mac assigned to device "<<ind<<" is : "<<b.mac_address<<"\n";
+            // cout<< " mac assigned to device "<<ind<<" is : "<<b.mac_address<<"\n";
         } else if(type == "switch") {
             Switch s;
             s.global_index = ind;
@@ -466,7 +466,7 @@ void boot() {
             device_type[ind] = mp(type,switch_no);
             switch_no++;
             mac_index++;
-            cout<< " mac assigned to device "<<ind<<" is : "<<s.mac_address<<"\n";
+            // cout<< " mac assigned to device "<<ind<<" is : "<<s.mac_address<<"\n";
         }
     }
 
@@ -504,98 +504,28 @@ void boot() {
 
 
 void run_network() {
-    // Resolving Queries
-    // With no access control protocol  
-    // cinll(q);
-    // for(ll i = 0;i < q; i++) {
-    //     // a -> sender 
-    //     // b -> receiver 
-    //     // n -> no of packets
-    //     cinll(a);cinll(b);cinll(n);
-    //     // a and b will always be devices
+    cinll(res);
+    if(res == 0) {
+        //Resolving Queries
+        //With no access control protocol  
+        cinll(q);
+        for(ll i = 0;i < q; i++) {
+            // a -> sender 
+            // b -> receiver 
+            // n -> no of packets
+            cinll(a);cinll(b);cinll(n);
+            // a and b will always be devices
 
-    //     Device ad = device_list[device_type[a].s];
-    //     Device bd = device_list[device_type[b].s]; 
-        
-    //     // sending packets one by one
-
-    //     for(ll i = 0;i < n; i++) {
+            Device ad = device_list[device_type[a].s];
+            Device bd = device_list[device_type[b].s]; 
             
-    //         vector<bool> visited(10001,false);
-    //         cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
-    //         send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false);  
+            // sending packets one by one
 
-    //         cout<<"\n";
-
-            
-    //         for(ll i=0;i<switch_list.size();i++) {
-    //             cout<<"SWITCHING TABLE \n";
-    //             Switch s = switch_list[i];
-    //             cout<<"Switch's global address : "<<s.global_index<<"\n";
-    //             cout<<"Switch's mac address : "<<s.mac_address<<"\n";
+            for(ll i = 0;i < n; i++) {
                 
-    //             for(auto it = s.switch_table.begin();it!= s.switch_table.end();it++) {
-    //                 cout<<it->first<<" "<<it->second<<"\n"; 
-    //             }
-    //             cout<<"\n";
-    //         } 
-
-    //         for(ll i=0;i < bridge_list.size();i++) {
-    //             cout<<"Bridge TABLE \n";
-    //             Bridge b = bridge_list[i];
-    //             cout<<"Switch's global address : "<<b.global_index<<"\n";
-    //             cout<<"Switch's mac address : "<<b.mac_address<<"\n";
-                
-    //             for(auto it = b.bridge_table.begin();it!= b.bridge_table.end();it++) {
-    //                 cout<<it->first<<" "<<it->second<<"\n"; 
-    //             }
-
-    //             cout<<"\n";
-    //         }
-
-    //     }
-    // }
-
-    // with reservation (controlled access protocol) 
-
-    // what well will do is first lets create all the reservation frames 
-    // for that we will input all the queries first then run them offline 
-
-    // We are storing it like set of queue's each queue corresponds to a device and in front of 
-    //each queue contains the pair of destination and no of packets to send 
-    // if no of packets became zero we pop that entry 
-    queue< pair<string,ll> > reservation_frame[device_list.size() + 1];
-
-    cinll(q);
-    while(q--) {
-        cinll(a);cinll(b);cinll(n);
-
-        ll a_device_index = device_type[a].s;
-        ll b_device_index = device_type[b].s;
-
-        Device ad = device_list[a_device_index];
-        Device bd = device_list[b_device_index]; 
-
-        reservation_frame[a_device_index].push(mp(bd.mac_address,n));
-    }
-
-    // Sending packets according to reservation frames 
-    bool remaining = true;
-    while(remaining) {
-        ll sent = false;
-        for(ll i = 0;i < device_list.size(); i++) {
-            if(reservation_frame[i].size() > 0) {
-
-                Device sender = device_list[i];
-
                 vector<bool> visited(10001,false);
-                cout<<"\nSENDING PACKET FROM "<< sender.mac_address<<"  to  "<<reservation_frame[i].front().f<<"\n\n";
-                send_packet(sender.global_index,visited,-1,sender.mac_address,reservation_frame[i].front().f,false);  
-                sent = true;
-                reservation_frame[i].front().s--;
-                if(reservation_frame[i].front().s == 0) {
-                    reservation_frame[i].pop();
-                }
+                cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
+                send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false);  
 
                 cout<<"\n";
 
@@ -627,8 +557,81 @@ void run_network() {
 
             }
         }
-        remaining = sent;
-    }
+    } else {
+        // with reservation (controlled access protocol) 
+
+        // what well will do is first lets create all the reservation frames 
+        // for that we will input all the queries first then run them offline 
+
+        // We are storing it like set of queue's each queue corresponds to a device and in front of 
+        //each queue contains the pair of destination and no of packets to send 
+        // if no of packets became zero we pop that entry 
+        queue< pair<string,ll> > reservation_frame[device_list.size() + 1];
+
+        cinll(q);
+        while(q--) {
+            cinll(a);cinll(b);cinll(n);
+
+            ll a_device_index = device_type[a].s;
+            ll b_device_index = device_type[b].s;
+
+            Device ad = device_list[a_device_index];
+            Device bd = device_list[b_device_index]; 
+
+            reservation_frame[a_device_index].push(mp(bd.mac_address,n));
+        }
+
+        // Sending packets according to reservation frames 
+        bool remaining = true;
+        while(remaining) {
+            ll sent = false;
+            for(ll i = 0;i < device_list.size(); i++) {
+                if(reservation_frame[i].size() > 0) {
+
+                    Device sender = device_list[i];
+
+                    vector<bool> visited(10001,false);
+                    cout<<"\nSENDING PACKET FROM "<< sender.mac_address<<"  to  "<<reservation_frame[i].front().f<<"\n\n";
+                    send_packet(sender.global_index,visited,-1,sender.mac_address,reservation_frame[i].front().f,false);  
+                    sent = true;
+                    reservation_frame[i].front().s--;
+                    if(reservation_frame[i].front().s == 0) {
+                        reservation_frame[i].pop();
+                    }
+
+                    cout<<"\n";
+
+                    
+                    for(ll i=0;i<switch_list.size();i++) {
+                        cout<<"SWITCHING TABLE \n";
+                        Switch s = switch_list[i];
+                        cout<<"Switch's global address : "<<s.global_index<<"\n";
+                        cout<<"Switch's mac address : "<<s.mac_address<<"\n";
+                        
+                        for(auto it = s.switch_table.begin();it!= s.switch_table.end();it++) {
+                            cout<<it->first<<" "<<it->second<<"\n"; 
+                        }
+                        cout<<"\n";
+                    } 
+
+                    for(ll i=0;i < bridge_list.size();i++) {
+                        cout<<"Bridge TABLE \n";
+                        Bridge b = bridge_list[i];
+                        cout<<"Switch's global address : "<<b.global_index<<"\n";
+                        cout<<"Switch's mac address : "<<b.mac_address<<"\n";
+                        
+                        for(auto it = b.bridge_table.begin();it!= b.bridge_table.end();it++) {
+                            cout<<it->first<<" "<<it->second<<"\n"; 
+                        }
+
+                        cout<<"\n";
+                    }
+
+                }
+            }
+            remaining = sent;
+        }
+    }    
 
 }
 
