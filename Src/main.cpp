@@ -412,11 +412,11 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
             cout<<"Data packet recieved sucessfully sending back ACK";
             vector<bool> visited(10001,false);
             cout<<"\nSENDING ACK FROM "<< destination_mac<<"  to  "<<senders_mac<<"\n\n";
-            if(collison_or_not() == 1) {
+            // if(collison_or_not() == 1) {
                 send_packet(current_device,visited,-1,destination_mac,senders_mac,true,isAckRecieved);
-            } else {
-                cout<<" \n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
-            }
+            // } else {
+                // cout<<" \n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+            // }
             return;
         } else if(type == "device" && d.mac_address == destination_mac) {
             isAckRecieved = true;
@@ -452,6 +452,7 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                         }
                         return;
                     } else if(d.mac_address == destination_mac) {
+                        isAckRecieved = true;
                         cout<<"ACK recieved sucessfully";
                     }
                 }
@@ -579,7 +580,7 @@ void run_network() {
                     vector<bool> visited(10001,false);
                     cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
                     send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false,isAckRecieved);  
-                    cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
+                    if(!isAckRecieved) cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
                     cout<<"\n";
                 }
                 
@@ -649,7 +650,7 @@ void run_network() {
                         vector<bool> visited(10001,false);
                         cout<<"\nSENDING PACKET FROM "<< sender.mac_address<<"  to  "<<reservation_frame[i].front().f<<"\n\n";
                         send_packet(sender.global_index,visited,-1,sender.mac_address,reservation_frame[i].front().f,false,isAckRecieved); 
-                        cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
+                        if(!isAckRecieved) cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
                     } 
                     sent = true;
                     reservation_frame[i].front().s--;
