@@ -280,10 +280,27 @@ void no_of_collision_domains() {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+////////////////////////////////Collision Or no Collision based on probabiliy////////////////////
+
+// p is the propbability of sucessfull transmission
+ll p; 
+ll collison_or_not() {
+    vector<ll> prob(101,0);
+    for(ll i = 0;i < p; i++) {
+        prob[i] = 1;
+    }
+    ll index = rand() % 100;         
+    return prob[index];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 ////////////////////////////////SEND PACKETS (BOTH DATA AND ACK) /////////////////////////////////
 
 
-void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string senders_mac,string destination_mac,bool isAck) {
+void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string senders_mac,string destination_mac,bool isAck, bool &isAckRecieved) {
     if(!visited[current_device]) {
         visited[current_device] = true;
         
@@ -321,7 +338,11 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
 
-                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck);
+                    if(collison_or_not() == 1) {
+                        send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck,isAckRecieved);
+                    } else {
+                        cout<<"\n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                    }
                 } else {
                     //Broadcast
                     cout<<"SWITCH IS BROADCASTING : \n\n";
@@ -332,7 +353,11 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                             cout<<"Mac address : "<<s.mac_address<<"\n";
                             if(isAck) cout<<"isACK \n";
                             cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
-                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
+                            if(collison_or_not() == 1) {
+                                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck,isAckRecieved);
+                            } else {
+                                cout<<"\n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                            }
                         }
                     }
                 }
@@ -350,7 +375,11 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                     cout<<"Mac address : "<<b.mac_address<<"\n";
                     if(isAck) cout<<"isACK \n";
                     cout<<"Sending to : "<<connections[current_device][destPort-1]<<"\n\n";
-                    send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck);
+                    if(collison_or_not() == 1) {
+                        send_packet(connections[current_device][destPort-1],visited,current_device,senders_mac,destination_mac,isAck,isAckRecieved);
+                    } else {
+                        cout<<"\n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                    }
                 } else {
                     //Broadcast
                     for(ll i = 0;i < connections[current_device].size(); i++) {
@@ -360,7 +389,11 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                             cout<<"Mac address : "<<b.mac_address<<"\n";
                             if(isAck) cout<<"isACK \n";
                             cout<<"Sending to : "<<connections[current_device][i]<<"\n\n";
-                            send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
+                            if(collison_or_not() == 1) {    
+                                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck,isAckRecieved);
+                            } else {
+                                cout<<" \n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                            }
                         }
                     }
                 }
@@ -379,10 +412,16 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
             cout<<"Data packet recieved sucessfully sending back ACK";
             vector<bool> visited(10001,false);
             cout<<"\nSENDING ACK FROM "<< destination_mac<<"  to  "<<senders_mac<<"\n\n";
-            send_packet(current_device,visited,-1,destination_mac,senders_mac,true);
+            if(collison_or_not() == 1) {
+                send_packet(current_device,visited,-1,destination_mac,senders_mac,true,isAckRecieved);
+            } else {
+                cout<<" \n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+            }
             return;
         } else if(type == "device" && d.mac_address == destination_mac) {
+            isAckRecieved = true;
             cout<<"ACK recieved sucessfully \n\n";
+            return;
         }
         for(ll i = 0;i < connections[current_device].size(); i++) {
             if(!visited[connections[current_device][i]]) {
@@ -406,13 +445,21 @@ void send_packet(ll current_device, vector<bool> & visited, ll ind_prev , string
                         cout<<"Data packet recieved sucessfully sending back ACK";
                         vector<bool> visited(10001,false);
                         cout<<"\nSENDING ACK FROM "<< destination_mac<<"  to  "<<senders_mac<<"\n\n";
-                        send_packet(current_device,visited,-1,destination_mac,senders_mac,true);
+                        if(collison_or_not() == 1) {
+                            send_packet(current_device,visited,-1,destination_mac,senders_mac,true,isAckRecieved);
+                        } else {
+                            cout<<"\n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                        }
                         return;
                     } else if(d.mac_address == destination_mac) {
                         cout<<"ACK recieved sucessfully";
                     }
                 }
-                send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck);
+                if(collison_or_not() == 1) {
+                    send_packet(connections[current_device][i],visited,current_device,senders_mac,destination_mac,isAck,isAckRecieved);
+                } else {
+                    cout<<"\n !!!!! COLLISION HAPPENED WHILE TRANSMISSION !!!!! \n";
+                }
             }
         }
     }
@@ -505,6 +552,8 @@ void boot() {
 
 void run_network() {
     cinll(res);
+    cinll(probabiliy);
+    p = probabiliy;
     if(res == 0) {
         //Resolving Queries
         //With no access control protocol  
@@ -523,12 +572,16 @@ void run_network() {
 
             for(ll i = 0;i < n; i++) {
                 
-                vector<bool> visited(10001,false);
-                cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
-                send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false);  
 
-                cout<<"\n";
-
+                bool isAckRecieved = false;
+                
+                while(!isAckRecieved) {
+                    vector<bool> visited(10001,false);
+                    cout<<"\nSENDING PACKET FROM "<< ad.mac_address<<"  to  "<<bd.mac_address<<"\n\n";
+                    send_packet(a,visited,-1,ad.mac_address,bd.mac_address,false,isAckRecieved);  
+                    cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
+                    cout<<"\n";
+                }
                 
                 for(ll i=0;i<switch_list.size();i++) {
                     cout<<"SWITCHING TABLE \n";
@@ -590,9 +643,14 @@ void run_network() {
 
                     Device sender = device_list[i];
 
-                    vector<bool> visited(10001,false);
-                    cout<<"\nSENDING PACKET FROM "<< sender.mac_address<<"  to  "<<reservation_frame[i].front().f<<"\n\n";
-                    send_packet(sender.global_index,visited,-1,sender.mac_address,reservation_frame[i].front().f,false);  
+                    bool isAckRecieved = false;
+                
+                    while(!isAckRecieved) {
+                        vector<bool> visited(10001,false);
+                        cout<<"\nSENDING PACKET FROM "<< sender.mac_address<<"  to  "<<reservation_frame[i].front().f<<"\n\n";
+                        send_packet(sender.global_index,visited,-1,sender.mac_address,reservation_frame[i].front().f,false,isAckRecieved); 
+                        cout<<"\n !!!!!! ACK NOT RECIEVED TIMED OUT RESENDING !!!!!! \n";
+                    } 
                     sent = true;
                     reservation_frame[i].front().s--;
                     if(reservation_frame[i].front().s == 0) {
